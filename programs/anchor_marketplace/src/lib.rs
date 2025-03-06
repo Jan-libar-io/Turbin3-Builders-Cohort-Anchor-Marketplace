@@ -12,7 +12,7 @@ pub mod anchor_marketplace {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>, name: String, fee: u16) -> Result<()> {
-        ctx.accounts.initialize(name, fee)?;
+        ctx.accounts.initialize_marketplace(name, fee, &ctx.bumps)?;
         Ok(())
     }
 
@@ -20,15 +20,11 @@ pub mod anchor_marketplace {
         Ok(())
     }
 
-    pub fn purchase(ctx: Context<Purchase>) -> Result<()> {
-        Ok(())
-    }
+    // pub fn purchase(ctx: Context<Purchase>) -> Result<()> {
+    //     Ok(())
+    // }
     
-    pub fn delist(ctx: Context<Delist>) -> Result<()> {
-        Ok(())
-    }
+    // pub fn delist(ctx: Context<Delist>) -> Result<()> {
+    //     Ok(())
+    // }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
- 

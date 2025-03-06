@@ -8,22 +8,19 @@ use crate::state::{marketplace::Marketplace, MarketplaceError};
 pub struct Initialize<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
-
     #[account(
         init,
         payer = admin,
         seeds = [b"marketplace", name.as_str().as_bytes()],
-        space = Marketplace::INIT_SPACE,
+        space = 8 + Marketplace::INIT_SPACE,
         bump
     )]
     pub marketplace: Account<'info, Marketplace>,
-
     #[account(
         seeds = [b"treasury", marketplace.key().as_ref()],
         bump
     )]
     pub treasury: SystemAccount<'info>,
-
     #[account(
         init,
         payer = admin,
@@ -34,27 +31,28 @@ pub struct Initialize<'info> {
 
     )]
     pub rewards_mint: InterfaceAccount<'info, Mint>,
-
     pub system_program: Program<'info, System>,
     pub token_program: Interface<'info, TokenInterface>,
 }
 
 impl<'info> Initialize<'info> {
-    pub fn initialize(
+    pub fn initialize_marketplace(
         &mut self,
         name: String,
-        fee: u16
+        fee: u16,
+        bumps: &InitializeBumps
     ) -> Result<()> {
         require!(name.len() > 0 && name.len() < 4 + 32 , MarketplaceError::NameToLong);
 
         self.marketplace.set_inner(Marketplace {
             admin: self.admin.key(),
             fee,
-            bump: bump.marketplace,
-            treasury_bump: bump.treasury,
-            rewards_bump: bump.rewards_mint,
+            bump: bumps.marketplace,
+            treasury_bump: bumps.treasury,
+            rewards_bump: bumps.rewards_mint,
             name
         });
+        
         Ok(())
     }
 }
